@@ -1,7 +1,6 @@
-import 'package:controle_frutas/FormulariodeCOntato.dart';
+import 'package:controle_frutas/FormulariodeContato.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'FormularioDeContato.dart';
 import 'GerenciadorDeContatos.dart';
 import 'Contato.dart'; 
 
