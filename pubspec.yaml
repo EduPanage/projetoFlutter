@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^6.0.1  
+  shared_preferences: ^2.0.6 
+  mask_text_input_formatter: ^2.0.0
 
 dev_dependencies:
   flutter_test:
