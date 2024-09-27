@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'ListagemDeContatos.dart'; 
 
 void main() {
   runApp(const App()); // inicia o aplicativo
@@ -11,7 +12,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp( 
-      home: Principal(), // define a tela inicial
+      home: ListagemDeContatos(), // define a tela inicial
     );
   }
 }
