@@ -6,8 +6,8 @@ import 'Contato.dart';
 
 class FormularioDeContato extends StatefulWidget {
 
-  final Contato? contato; 
-  final int? indice; 
+  final Contato? contato;  // contato a ser editado ou nulo para novo
+  final int? indice;  // índice do contato na lista
 
   FormularioDeContato({this.contato, this.indice});
 
@@ -17,13 +17,12 @@ class FormularioDeContato extends StatefulWidget {
 
 class _FormularioDeContatoState extends State<FormularioDeContato> {
 
-  final _chaveFormulario = GlobalKey<FormState>();
-  final _nomeControlador = TextEditingController();
-  final _telefoneControlador = TextEditingController();
-  final _emailControlador = TextEditingController();
+  final _chaveFormulario = GlobalKey<FormState>();  // chave global para o formulário
+  final _nomeControlador = TextEditingController(); // controla o campo do nome
+  final _telefoneControlador = TextEditingController(); // controla o campo do telefone
+  final _emailControlador = TextEditingController(); // controla o campo do e-mail
 
-  
-  var formatadorTelefone = MaskTextInputFormatter( // Formatação do telefone
+  var formatadorTelefone = MaskTextInputFormatter( // formatação do telefone
     mask: '(##) #####-####',
     filter: {"#": RegExp(r'[0-9]')},
   );
@@ -31,12 +30,12 @@ class _FormularioDeContatoState extends State<FormularioDeContato> {
   @override
   void initState() {
     super.initState();
-    
-    if (widget.contato != null) {  // Preenche os campos se estiver editando um contato
+
+    // preenche os campos se estiver editando um contato
+    if (widget.contato != null) {
       _nomeControlador.text = widget.contato!.nome;
       _telefoneControlador.text = widget.contato!.telefone;
       _emailControlador.text = widget.contato!.email;
-
     }
   }
 
@@ -44,64 +43,68 @@ class _FormularioDeContatoState extends State<FormularioDeContato> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.contato == null ? 'Novo Contato' : 'Editar Contato'),
+        title: Text(widget.contato == null ? 'Novo Contato' : 'Editar Contato'), // título da página
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
-          key: _chaveFormulario,
+          key: _chaveFormulario, // chave usada para validar o formulário
           child: Column(
             children: [
-              // Campo para o nome
+              // campo de texto para o nome
               TextFormField(
                 controller: _nomeControlador,
                 decoration: InputDecoration(labelText: 'Nome'),
                 validator: (valor) {
                   if (valor == null || valor.isEmpty) {
-                    return 'O nome é obrigatório.'; // Validação do nome
+                    return 'O nome é obrigatório.';  // validação do campo nome
                   }
                   return null;
                 },
               ),
-              
-              // Campo para o telefone
+              SizedBox(height: 16), // espaçamento entre os campos
+
+              // campo de texto para o telefone
               TextFormField(
                 controller: _telefoneControlador,
                 decoration: InputDecoration(labelText: 'Telefone'),
-                inputFormatters: [formatadorTelefone], // Aplica a máscara
+                inputFormatters: [formatadorTelefone], // máscara do telefone
                 keyboardType: TextInputType.phone,
                 validator: (valor) {
                   if (valor == null || valor.isEmpty || valor.length != 15) {
-                    return 'Telefone inválido.'; // Validação do telefone
+                    return 'Telefone inválido.'; // validação do campo telefone
                   }
                   return null;
                 },
               ),
+              SizedBox(height: 16),
 
-              // Campo para o e-mail
+              // campo de texto para o e-mail
               TextFormField(
                 controller: _emailControlador,
                 decoration: InputDecoration(labelText: 'E-mail'),
                 keyboardType: TextInputType.emailAddress,
                 validator: (valor) {
                   if (valor == null || valor.isEmpty || !valor.contains('@')) {
-                    return 'E-mail inválido.'; // Validação do e-mail
+                    return 'E-mail inválido.'; // validação do campo e-mail
                   }
                   return null;
                 },
               ),
+              SizedBox(height: 16),
 
-              // Botão para salvar ou atualizar
+              // botão para salvar ou atualizar o contato
               ElevatedButton(
                 onPressed: () {
                   if (_chaveFormulario.currentState!.validate()) {
+                    // cria um novo contato com as informações preenchidas
                     Contato novoContato = Contato(
                       nome: _nomeControlador.text,
                       telefone: _telefoneControlador.text,
                       email: _emailControlador.text,
                     );
 
-                    // Adiciona ou atualiza o contato
+                    // adiciona ou atualiza o contato na lista
                     if (widget.indice == null) {
                       Provider.of<GerenciadorDeContatos>(context, listen: false)
                           .adicionarContato(novoContato);
@@ -109,7 +112,9 @@ class _FormularioDeContatoState extends State<FormularioDeContato> {
                       Provider.of<GerenciadorDeContatos>(context, listen: false)
                           .atualizarContato(widget.indice!, novoContato);
                     }
-                    Navigator.of(context).pop(); // Volta para a tela anterior
+
+                    // retorna à tela anterior após salvar
+                    Navigator.of(context).pop();
                   }
                 },
                 child: Text(widget.contato == null ? 'Salvar' : 'Atualizar'),
