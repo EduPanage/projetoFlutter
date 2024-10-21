@@ -29,9 +29,33 @@ class ListagemDeContatos extends StatelessWidget {
                 subtitle: Text('${contato.telefone}\n${contato.email}'), 
                 isThreeLine: true, // Permite três linhas na exibição
                 trailing: IconButton(
-                  icon: Icon(Icons.delete), // botão para deletar o contato
+                  icon: Icon(Icons.delete), // Botão para deletar o contato
                   onPressed: () {
-                    gerenciadorDeContatos.removerContato(indice); // remove o contato da lista
+                    // Confirma a remoção do contato
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Confirmar remoção'),
+                          content: Text('Deseja realmente remover ${contato.nome}?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Fecha o diálogo
+                              },
+                              child: Text('Cancelar'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                gerenciadorDeContatos.removerContato(indice); // Remove o contato da lista e do banco
+                                Navigator.of(context).pop(); // Fecha o diálogo
+                              },
+                              child: Text('Remover'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                 ),
                 onTap: () {

@@ -23,14 +23,14 @@ class ContatoDAO {
       path,
       version: 1,
       onCreate: (db, version) async {
-        await db.execute('''
+        await db.execute(''' 
           CREATE TABLE contatos(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT,
             telefone TEXT,
             email TEXT
           )
-        '''); // Cria a tabela de contatos
+        ''' ); // Cria a tabela de contatos
       },
     );
   }
@@ -39,6 +39,17 @@ class ContatoDAO {
   Future<void> insertContato(Contato contato) async {
     final db = await database; // Obtém a instância do banco
     await db.insert('contatos', contato.paraMapa(), conflictAlgorithm: ConflictAlgorithm.replace); // Insere o contato
+  }
+
+  // Atualiza um contato existente no banco de dados
+  Future<void> updateContato(Contato contato) async {
+    final db = await database; // Obtém a instância do banco
+    await db.update(
+      'contatos',
+      contato.paraMapa(),
+      where: 'id = ?',
+      whereArgs: [contato.id],
+    ); // Atualiza o contato com o id fornecido
   }
 
   // Obtém a lista de contatos do banco de dados
