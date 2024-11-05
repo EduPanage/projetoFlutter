@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'Contato.dart'; 
-import 'ContatoDAO.dart'; 
+import 'package:provider/provider.dart';
+import 'Contato.dart';
+import 'GerenciadorDeContatos.dart';
 
 class FormularioDeContato extends StatefulWidget {
-  final Contato? contato;  // contato a ser editado ou nulo para novo
+  final Contato? contato;
+  final int? indice;
 
-  FormularioDeContato({this.contato});
+  FormularioDeContato({this.contato, this.indice});
 
   @override
   _FormularioDeContatoState createState() => _FormularioDeContatoState();
 }
 
 class _FormularioDeContatoState extends State<FormularioDeContato> {
-  final _chaveFormulario = GlobalKey<FormState>();  // chave global para o formulário
-  final _nomeControlador = TextEditingController(); // controla o campo do nome
-  final _telefoneControlador = TextEditingController(); // controla o campo do telefone
-  final _emailControlador = TextEditingController(); // controla o campo do e-mail
+  final _chaveFormulario = GlobalKey<FormState>(); 
+  final _nomeControlador = TextEditingController(); 
+  final _telefoneControlador = TextEditingController();
+  final _emailControlador = TextEditingController(); 
 
-  var formatadorTelefone = MaskTextInputFormatter( // formatação do telefone
+  var formatadorTelefone = MaskTextInputFormatter( 
     mask: '(##) #####-####',
     filter: {"#": RegExp(r'[0-9]')},
   );
@@ -35,25 +37,21 @@ class _FormularioDeContatoState extends State<FormularioDeContato> {
 
   void _salvarContato() async {
     if (_chaveFormulario.currentState!.validate()) {
-      // Cria um novo contato com as informações preenchidas
+      final gerenciador = Provider.of<GerenciadorDeContatos>(context, listen: false);
+      
       Contato novoContato = Contato(
-        id: widget.contato?.id, // Se for uma edição, mantém o ID
+        id: widget.contato?.id,
         nome: _nomeControlador.text,
         telefone: _telefoneControlador.text,
         email: _emailControlador.text,
       );
 
-      final contatoDAO = ContatoDAO();
-      
       if (widget.contato == null) {
-        // Adiciona um novo contato
-        await contatoDAO.insertContato(novoContato);
+        await gerenciador.adicionarContato(novoContato);
       } else {
-        // Atualiza o contato existente
-        await contatoDAO.updateContato(novoContato); // Usa o método de atualização
+        await gerenciador.atualizarContato(widget.indice!, novoContato);
       }
 
-      // Retorna à tela anterior após salvar
       Navigator.of(context).pop();
     }
   }

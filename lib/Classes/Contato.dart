@@ -1,6 +1,6 @@
 class Contato {
   int? id; // Adicionando o campo id para identificar cada contato
-  String nome;  // Variáveis de contato
+  String nome;  
   String telefone; 
   String email; 
 

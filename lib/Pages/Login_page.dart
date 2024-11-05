@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
+import 'secure_dao.dart'; 
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -18,21 +23,18 @@ class _LoginPageState extends State<LoginPage> {
 
   // Função para fazer login
   Future<void> _login() async {
-    if (_formKey.currentState!.validate()) { // Valida o formulário
-      final usuarioDAO = UsuarioDAO(); // Instancia o DAO para acessar os usuários
-      final usuario = await usuarioDAO.getUsuarioByEmail(_emailController.text); // Busca usuário pelo email
+    if (_formKey.currentState!.validate()) {
+      final usuarioDAO = UsuarioSecureDAO(); // Alterado para UsuarioSecureDAO
+      final usuario = await usuarioDAO.getUsuarioByEmail(_emailController.text);
 
-      // Verifica se o usuário existe e se a senha está correta
       if (usuario != null && usuario.senha == _hashSenha(_senhaController.text)) {
-        final prefs = await SharedPreferences.getInstance(); // Acessa SharedPreferences
-        await prefs.setString('usuario_nome', usuario.nome); // Salva o nome do usuário
+        final storage = const FlutterSecureStorage(); // Usando SecureStorage em vez de SharedPreferences
+        await storage.write(key: 'usuario_nome', value: usuario.nome);
 
-        // Navega para a próxima página
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => ListagemDeContatos()),
         );
       } else {
-        // Mostra uma mensagem de erro se o login falhar
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Email ou senha inválidos')),
         );

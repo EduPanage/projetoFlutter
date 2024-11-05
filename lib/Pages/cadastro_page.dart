@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
-import 'usuario_dao.dart';
+import 'secure_dao.dart'; 
 import 'usuario.dart';
 
 class CadastroPage extends StatefulWidget {
@@ -11,26 +11,25 @@ class CadastroPage extends StatefulWidget {
 
 class _CadastroPageState extends State<CadastroPage> {
   final _formKey = GlobalKey<FormState>(); // Chave para validar o formulário
-  final _nomeController = TextEditingController(); // Controlador para o campo de nome
-  final _emailController = TextEditingController(); // Controlador para o campo de email
-  final _senhaController = TextEditingController(); // Controlador para o campo de senha
+  final _nomeController = TextEditingController(); 
+  final _emailController = TextEditingController(); 
+  final _senhaController = TextEditingController(); 
   final _confirmarSenhaController = TextEditingController(); // Controlador para confirmar a senha
-  bool _obscureText = true; // Controla a visibilidade da senha
-  bool _obscureTextConfirm = true; // Controla a visibilidade da confirmação da senha
+  bool _obscureText = true; 
+  bool _obscureTextConfirm = true; 
 
-  // Função para hash da senha usando SHA-256
+  
   String _hashSenha(String senha) {
-    var bytes = utf8.encode(senha); // Converte a senha para bytes
-    var digest = sha256.convert(bytes); // Cria o hash
+    var bytes = utf8.encode(senha); 
+    var digest = sha256.convert(bytes); 
     return digest.toString(); // Retorna o hash como string
   }
 
   // Função para cadastrar um novo usuário
   Future<void> _cadastrar() async {
-    if (_formKey.currentState!.validate()) { // Valida o formulário
-      final usuarioDAO = UsuarioDAO();
+    if (_formKey.currentState!.validate()) {
+      final usuarioDAO = UsuarioSecureDAO(); // Alterado para UsuarioSecureDAO
 
-      // Verifica se o email já está cadastrado
       final usuarioExistente = await usuarioDAO.getUsuarioByEmail(_emailController.text);
       if (usuarioExistente != null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -39,21 +38,19 @@ class _CadastroPageState extends State<CadastroPage> {
         return;
       }
 
-      // Cria um novo usuário
       final novoUsuario = Usuario(
-        nome: _nomeController.text,
+        nome: _nomeControlador.text,
         email: _emailController.text,
         senha: _hashSenha(_senhaController.text),
       );
 
-      await usuarioDAO.insertUsuario(novoUsuario); // Insere o novo usuário no banco
+      await usuarioDAO.insertUsuario(novoUsuario);
 
-      // Exibe uma mensagem de sucesso
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Cadastro realizado com sucesso!')),
       );
 
-      Navigator.of(context).pop(); // Volta para a tela anterior
+      Navigator.of(context).pop();
     }
   }
 

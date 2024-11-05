@@ -1,8 +1,8 @@
 class Usuario {
-  int? id; // ID do usuário (opcional)
-  String nome; // Nome do usuário
-  String email; // Email do usuário
-  String senha; // Senha do usuário
+  int? id;
+  String nome; 
+  String email; 
+  String senha; 
 
   // Construtor que requer nome, email e senha, e opcionalmente o ID
   Usuario({

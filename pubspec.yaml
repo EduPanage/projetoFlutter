@@ -29,4 +29,7 @@ dependencies:
 
   dependencies:
   shared_preferences: ^2.2.2
-  crypto: ^3.0.3
+  crypto: ^3.0.3]
+
+  dependencies:
+  flutter_secure_storage: ^latest_version
